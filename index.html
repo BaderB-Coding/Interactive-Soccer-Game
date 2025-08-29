@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soccer in Space - CR7 Edition</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #000;
+            color: white;
+            overflow-x: hidden;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Animated space background */
+        .space-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, #000428, #004e92);
+            z-index: -2;
+        }
+
+        .stars {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        /* Game area */
+        .game-container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            height: 500px;
+            position: relative;
+        }
+
+        /* Ronaldo */
+        .ronaldo {
+            position: absolute;
+            bottom: 50px;
+            left: 100px;
+            width: 120px;
+            height: 180px;
+            cursor: pointer;
+            transition: transform 0.3s;
+            z-index: 10;
+        }
+
+        .ronaldo:hover {
+            transform: scale(1.05);
+        }
+
+        .ronaldo-body {
+            width: 60px;
+            height: 80px;
+            background: linear-gradient(135deg, #ff0000, #800000);
+            border-radius: 20px 20px 10px 10px;
+            position: absolute;
+            top: 40px;
+            left: 30px;
+        }
+
+        .ronaldo-head {
+            width: 40px;
+            height: 40px;
+            background: #f4c4a0;
+            border-radius: 50%;
+            position: absolute;
+            top: 10px;
+            left: 40px;
+        }
+
+        .ronaldo-hair {
+            width: 35px;
+            height: 20px;
+            background: #2c1810;
+            border-radius: 50% 50% 0 0;
+            position: absolute;
+            top: 5px;
+            left: 2.5px;
+        }
+
+        .ronaldo-leg {
+            width: 15px;
+            height: 40px;
+            background: #f4c4a0;
+            position: absolute;
+            top: 120px;
+        }
+
+        .ronaldo-leg.left {
+            left: 35px;
+            transform-origin: top center;
+        }
+
+        .ronaldo-leg.right {
+            left: 55px;
+        }
+
+        .ronaldo-leg.kick {
+            animation: kick 0.5s ease-out;
+        }
+
+        @keyframes kick {
+            0% { transform: rotate(0deg); }
+            50% { transform: rotate(-60deg); }
+            100% { transform: rotate(0deg); }
+        }
+
+        /* Soccer ball */
+        .ball {
+            width: 30px;
+            height: 30px;
+            background: radial-gradient(circle at 30% 30%, white, #ccc);
+            border-radius: 50%;
+            position: absolute;
+            bottom: 50px;
+            left: 180px;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+            z-index: 5;
+        }
+
+        .ball::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: repeating-conic-gradient(black 0deg 30deg, white 30deg 60deg);
+            border-radius: 50%;
+            opacity: 0.3;
+        }
+
+        .ball.shoot {
+            animation: ballShoot 1s ease-out forwards;
+        }
+
+        @keyframes ballShoot {
+            0% {
+                left: 180px;
+                bottom: 50px;
+            }
+            100% {
+                left: 850px;
+                bottom: 150px;
+            }
+        }
+
+        /* Goal */
+        .goal {
+            position: absolute;
+            right: 100px;
+            bottom: 50px;
+            width: 200px;
+            height: 150px;
+        }
+
+        .goal-net {
+            width: 100%;
+            height: 100%;
+            background: 
+                repeating-linear-gradient(90deg, transparent, transparent 8px, rgba(255,255,255,0.3) 8px, rgba(255,255,255,0.3) 10px),
+                repeating-linear-gradient(0deg, transparent, transparent 8px, rgba(255,255,255,0.3) 8px, rgba(255,255,255,0.3) 10px);
+            border: 3px solid white;
+            border-bottom: none;
+        }
+
+        /* Goalkeeper */
+        .goalkeeper {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 100px;
+            z-index: 6;
+        }
+
+        .goalkeeper-body {
+            width: 40px;
+            height: 50px;
+            background: linear-gradient(135deg, #00ff00, #008000);
+            border-radius: 10px 10px 5px 5px;
+            position: absolute;
+            top: 30px;
+            left: 10px;
+        }
+
+        .goalkeeper-head {
+            width: 30px;
+            height: 30px;
+            background: #f4c4a0;
+            border-radius: 50%;
+            position: absolute;
+            top: 5px;
+            left: 15px;
+        }
+
+        .goalkeeper-arms {
+            width: 60px;
+            height: 8px;
+            background: #00ff00;
+            position: absolute;
+            top: 40px;
+            left: 0;
+            transform-origin: center;
+        }
+
+        .goalkeeper.save .goalkeeper-arms {
+            animation: saveMotion 1s ease-out;
+        }
+
+        @keyframes saveMotion {
+            0% { transform: rotate(0deg); }
+            50% { transform: rotate(-30deg) translateY(-20px); }
+            100% { transform: rotate(0deg); }
+        }
+
+        /* Message display */
+        .message {
+            position: absolute;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 48px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+            opacity: 0;
+            z-index: 20;
+        }
+
+        .message.show {
+            animation: showMessage 2s ease-out;
+        }
+
+        @keyframes showMessage {
+            0% { opacity: 0; transform: translateX(-50%) scale(0.5); }
+            50% { opacity: 1; transform: translateX(-50%) scale(1.2); }
+            100% { opacity: 0; transform: translateX(-50%) scale(1); }
+        }
+
+        /* History section */
+        .history-section {
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 40px;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .history-section h2 {
+            font-size: 36px;
+            margin-bottom: 20px;
+            text-align: center;
+            background: linear-gradient(45deg, #00ff00, #00ffff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .history-section p {
+            font-size: 18px;
+            line-height: 1.8;
+            text-align: justify;
+        }
+
+        /* Arrow and Text */
+        .instruction {
+            position: absolute;
+            bottom: 170px; /* Adjust based on where the player is */
+        }
+    </style>
+</head>
+<body>
+    <div class="space-background"></div>
+    <div class="stars"></div>
+    <div class="game-container">
+        <div class="ronaldo">
+            <div class="ronaldo-head">
+                <div class="ronaldo-hair"></div>
+            </div>
+            <div class="ronaldo-body"></div>
+            <div class="ronaldo-leg left"></div>
+            <div class="ronaldo-leg right"></div>
+        </div>
+        <div class="ball"></div>
+        <div class="goal">
+            <div class="goal-net"></div>
+            <div class="goalkeeper">
+                <div class="goalkeeper-head"></div>
+                <div class="goalkeeper-body"></div>
+                <div class="goalkeeper-arms"></div>
+            </div>
+        </div>
+        <div class="message"></div>
+    </div>
+    <div class="history-section">
+        <h2>The Legacy of CR7</h2>
+        <p>Cristiano Ronaldo, often referred to as CR7, is one of the greatest soccer players of all time. Known for his incredible athleticism, precision, and unmatched dedication, he has left an indelible mark on the sport. From his early days at Sporting Lisbon, to his dominance at Manchester United, Real Madrid, Juventus, and back to Manchester United, Ronaldo has consistently redefined excellence in soccer. His record-breaking goals, leadership on the pitch, and relentless pursuit of greatness inspire millions around the world.</p>
+    </div>
+</body>
+</html>
